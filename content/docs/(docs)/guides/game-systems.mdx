@@ -18,7 +18,7 @@ over so your plugin can register into it.
 
 ## Why the head has to be handed over
 
-`CBaseGameSystemFactory::sm_pFirst` is a static member declared by the hl2sdk.
+`CBaseGameSystemFactory::sm_pFirst` is a static member declared by s2sdk.
 Every binary that includes the header gets its **own** copy, and yours is null
 until you point it at the engine's list. The factory constructor links itself
 into whatever `*sm_pFirst` points at, so the assignment must happen before you
@@ -104,7 +104,7 @@ bool InitGameSystems()
 returns.
 
 <Callout type="info">
-  `IEntityResourceManifest` is only forward-declared by the hl2sdk; adding
+  `IEntityResourceManifest` is only forward-declared by s2sdk; adding
   resources to it needs a declaration of its methods from your own project.
 </Callout>
 
@@ -125,7 +125,7 @@ returns.
   `BuildGameSessionManifest`.
 - **Pick a unique registration name** — prefix it with your plugin's name.
   `FindByName()` and the engine look systems up by that string.
-- **Nothing unlinks a factory.** Neither the hl2sdk nor the toolkit removes a
+- **Nothing unlinks a factory.** Neither s2sdk nor the toolkit removes a
   registered factory from the engine's list, and the toolkit does not track
   game systems per plugin. The factory and your game system object live in
   your library, so a plugin that registers one should not be unloaded or

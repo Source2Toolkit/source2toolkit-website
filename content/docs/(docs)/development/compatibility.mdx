@@ -13,7 +13,7 @@ toolkit is built so that the answer is **no** for as much as possible.
 | Tier | What the plugin uses | After a game or core update |
 |---|---|---|
 | **Stable** | the `IToolkit*` interfaces, `IToolkitListener` callbacks, [game hooks](/docs/hooks/game-hooks), schema fields by name, `KHOOK_VIRTUAL` with a gamedata name | update the core; the plugin keeps running |
-| **Raw** | its own KHook hooks (`KHOOK_MEMBER`, `KHOOK_VIRTUAL` with `&Class::Method`), hl2sdk classes and their layouts, protobuf messages by generated type, `TOOLKIT_ORIGINAL` | rebuild when the thing it compiled in moved |
+| **Raw** | its own KHook hooks (`KHOOK_MEMBER`, `KHOOK_VIRTUAL` with `&Class::Method`), s2sdk classes and their layouts, protobuf messages by generated type, `TOOLKIT_ORIGINAL` | rebuild when the thing it compiled in moved |
 
 The line runs through the plugin: everything resolved at run time from the
 core's gamedata or the schema system is the core's to keep working, everything
@@ -119,7 +119,7 @@ slow callback: command handler 'admin' of Core took 4530 ms -- the whole server 
 Set it to 0 to turn the check off. The cost when nothing is slow is two clock
 reads per callback.
 
-What stays raw by nature: protobuf messages by generated type, hl2sdk classes
+What stays raw by nature: protobuf messages by generated type, s2sdk classes
 used directly, `TOOLKIT_ORIGINAL`, and any hook on a function the core does not
 know. Those are rebuilt when the thing they compiled in moves, and `toolkit
 list` shows the server owner which plugins that concerns.

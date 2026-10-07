@@ -3,7 +3,7 @@ title: ConVars
 description: Declaring your own console variables, reading and writing the game's, and reacting when any of them changes.
 ---
 
-ConVars in CS2 are hl2sdk's `CConVar<T>` and `CConVarRef<T>` — the toolkit does
+ConVars in CS2 are s2sdk's `CConVar<T>` and `CConVarRef<T>` — the toolkit does
 not wrap them in a class of its own. What it adds is
 [`IToolkitConVars`](/docs/core-api/IToolkitConVars): an index-based interface for
 reading, writing and creating ConVars without templates, a process-wide change
@@ -41,7 +41,7 @@ bool MyPlugin::Load(PluginId id, IToolkitAPI* api, char* error, size_t maxlen, b
 
 ### Constructors
 
-```cpp title="tier1/convar.h (hl2sdk)"
+```cpp title="tier1/convar.h (s2sdk)"
 CConVar(const char* name, uint64 flags, const char* help_string, const T& default_value,
         FnTypedChangeCallback_t<T> cb = nullptr, ...);
 
@@ -55,7 +55,7 @@ Typical `T`: `bool`, `int`, `float`, `double`, `CUtlString`, `Vector`,
 
 ### Flags
 
-The `FCVAR_*` flags come from hl2sdk's `convar.h`. The ones you will use:
+The `FCVAR_*` flags come from s2sdk's `convar.h`. The ones you will use:
 
 | Flag | Meaning |
 | --- | --- |
@@ -168,7 +168,7 @@ UTIL_AddConVarFlags("myplugin_bonus", FCVAR_NOTIFY);
 For `UTIL_SetConVar` the *type* decides how the value is written, so spell it
 out (`UTIL_SetConVar<int>(…)`) when a literal would deduce to the wrong one — a
 string literal always needs `<const char*>`.
-These go through hl2sdk directly, so they also work before the toolkit's ConVar
+These go through s2sdk directly, so they also work before the toolkit's ConVar
 manager is up.
 
 ### `IToolkitConVars` — by access index

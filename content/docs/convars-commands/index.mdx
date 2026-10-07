@@ -67,7 +67,7 @@ A ConVar is a named, typed value in the console: `mp_freezetime`,
 `sv_cheats`, or one your plugin declares (`myplugin_enabled`). The toolkit side
 covers:
 
-- declaring your own with hl2sdk's `CConVar<T>` (the recommended way), or at
+- declaring your own with s2sdk's `CConVar<T>` (the recommended way), or at
   runtime through `IToolkitConVars::CreateConVar`;
 - reading and writing the game's ConVars — typed `CConVarRef<T>`, the
   index-based `IToolkitConVars` getters/setters, or the one-shot

@@ -8,7 +8,8 @@ The **Source2Toolkit SDK** is what you compile plugins against. It contains:
 - the toolkit's public headers (`public/source2toolkit/IToolkit*.h`) and the generated schema classes;
 - **KHook** headers — Metamod:Source's own detour library — as the `vendor/khook` submodule, pinned to the commit Metamod is built with;
 - the CMake (and AMBuild) build configuration, including the `add_s2toolkit_plugin` helper;
-- **hl2sdk-cs2** and the **Protobufs**, from a checkout you already have or one the SDK downloads for you.
+- **s2sdk** — AlliedModders' Source 2 SDK, formerly hl2sdk's `cs2` branch — as the `vendor/s2sdk` submodule, unless you point it at your own checkout;
+- the **Protobufs**, from a checkout you already have or one the SDK downloads for you.
 
 Requirements: CMake 3.18+, a C++20 compiler (GCC or Clang on Linux, MSVC on Windows), Python 3 and git.
 
@@ -31,51 +32,55 @@ git clone --recursive https://github.com/Source2Toolkit/source2toolkit-sdk.git
 
 ## Dependencies
 
-The SDK compiles against two things it does not carry in git: **hl2sdk-cs2** (the `cs2` branch of AlliedModders' hl2sdk) and the **Protobufs** (the `csgo/` folder of SteamDatabase/Protobufs). `tools/deps.py` sets them up once and keeps them current afterwards:
+**s2sdk** ([alliedmodders/s2sdk](https://github.com/alliedmodders/s2sdk), `cs2` branch) comes with the SDK: it is the `vendor/s2sdk` submodule, pinned to the commit the toolkit headers are built against, and the `--recursive` above already fetched it. What is left is the **Protobufs** (the `csgo/` folder of SteamDatabase/Protobufs). `tools/deps.py` sets that up once and keeps everything current afterwards:
 
 ```bash
 python tools/deps.py init
 ```
 
-`init` asks, for each of the two, whether to use a checkout you already have — found through the `HL2SDKCS2` / `CSGO_PROTO` environment variable, or a path you type — or to download it into `vendor/`. The answer is saved in `deps.json` next to the SDK (ignored by git), and from then on one command brings everything up to date:
+`init` asks, for s2sdk and for the Protobufs, whether to use a checkout you already have — found through an environment variable (below), or a path you type — or the SDK's own copy: the `vendor/s2sdk` submodule, a Protobufs clone into `vendor/`. The answer is saved in `deps.json` next to the SDK (ignored by git), and from then on one command brings everything up to date:
 
 ```bash
 python tools/deps.py update
 ```
 
-`update` pulls the two checkouts (a checkout with local changes is left alone), moves `vendor/khook` to the KHook commit that `alliedmodders/metamod-source` master pins — the toolkit core is built against that one, and a plugin built against any other KHook refuses to load — and moves `vendor/hl2sdk-manifests` to its latest. `python tools/deps.py status` shows what is configured and which commits are checked out. The full walkthrough, flags included, is on the [SDK dependencies](/docs/development/sdk-dependencies) page.
+`update` pulls your own checkouts (a checkout with local changes is left alone), puts `vendor/s2sdk` on the pinned commit, moves `vendor/khook` to the KHook commit that `alliedmodders/metamod-source` master pins — the toolkit core is built against that one, and a plugin built against any other KHook refuses to load — and moves `vendor/hl2sdk-manifests` to its latest. `python tools/deps.py status` shows what is configured and which commits are checked out. The full walkthrough, flags included, is on the [SDK dependencies](/docs/development/sdk-dependencies) page.
 
 The questions can be answered up front, which is what a CI script wants:
 
 ```bash
-python tools/deps.py init --hl2sdk download --protobufs download
-python tools/deps.py init --hl2sdk env --protobufs env
+python tools/deps.py init --s2sdk submodule --protobufs download
+python tools/deps.py init --s2sdk env --protobufs env
 ```
 
 <Callout type="info">
-  A downloaded dependency wins over the environment variable: `deps.py` writes `deps.cmake`, which CMake includes before it looks at `HL2SDKCS2` and `CSGO_PROTO`. Without `deps.json` the SDK behaves as before — the environment variables, then `vendor/hl2sdk-cs2` and `vendor/Protobufs/csgo` if they exist.
+  An explicit choice wins over the environment: `deps.py` writes `deps.cmake`, which CMake includes before it looks at any variable. Without `deps.json`, s2sdk comes from the first variable below that is set, else `vendor/s2sdk`, and the Protobufs from `CSGO_PROTO`, else `vendor/Protobufs/csgo`.
 </Callout>
 
 ### By hand
 
-If you would rather not use the script, set the two variables before running CMake:
+If you would rather not use the script, set the variables before running CMake:
 
 | Variable | Description |
 |---|---|
-| `HL2SDKCS2` | Path to your hl2sdk-cs2 checkout |
+| `S2SDK` | Path to your own s2sdk checkout. Optional — without it the `vendor/s2sdk` submodule is used. `S2SDK_CS2`, `S2SDKCS2`, `HL2SDK_CS2` and the old `HL2SDKCS2` work too; the first one set, in the order `S2SDK_CS2`, `S2SDKCS2`, `S2SDK`, `HL2SDK_CS2`, `HL2SDKCS2`, wins. |
 | `CSGO_PROTO` | Path to the `csgo/` folder of a SteamDatabase/Protobufs checkout |
 
 ```bash
 # Linux
-export HL2SDKCS2=/path/to/hl2sdk-cs2
+export S2SDK=/path/to/s2sdk          # optional
 export CSGO_PROTO=/path/to/Protobufs/csgo
 ```
 
 ```powershell
 # Windows (PowerShell)
-$env:HL2SDKCS2 = "C:\path\to\hl2sdk-cs2"
+$env:S2SDK = "C:\path\to\s2sdk"       # optional
 $env:CSGO_PROTO = "C:\path\to\Protobufs\csgo"
 ```
+
+<Callout type="info">
+  Coming from hl2sdk? Its `cs2` branch is no longer maintained; s2sdk continues it with the same history. Clone `https://github.com/alliedmodders/s2sdk.git` (branch `cs2`) and point `S2SDK` at it, or simply unset `HL2SDKCS2` and let the submodule be used.
+</Callout>
 
 KHook needs nothing from you: it is the `vendor/khook` submodule. `MMSOURCE_DEV` is only read when building the toolkit core itself.
 
@@ -112,7 +117,7 @@ add_s2toolkit_plugin(my_plugin
 )
 ```
 
-`add_s2toolkit_plugin(name sources...)` creates a shared library, links it against the `source2toolkit-sdk` target (include paths, definitions, hl2sdk and protobuf libraries come with it) and names the output `<name>.stx` with no `lib` prefix. It is an ordinary CMake target afterwards, so `target_include_directories`, `target_link_libraries` and `set_target_properties` work as usual.
+`add_s2toolkit_plugin(name sources...)` creates a shared library, links it against the `source2toolkit-sdk` target (include paths, definitions, s2sdk and protobuf libraries come with it) and names the output `<name>.stx` with no `lib` prefix. It is an ordinary CMake target afterwards, so `target_include_directories`, `target_link_libraries` and `set_target_properties` work as usual.
 
 To have the build drop the plugin straight into an `addons/` tree, set its output directory — this is what the official sample does:
 
@@ -183,10 +188,10 @@ and restart the server, or run `toolkit load my_plugin` in its console.
 
 ## What the SDK configures
 
-- C++20, platform compiler flags and the definitions the hl2sdk expects.
-- The SDK's own helper code (schema helpers, hook wrappers) and the hl2sdk's `tier1` / `entity2` sources, compiled into a static library that becomes part of your plugin.
-- Include directories for the toolkit, hl2sdk, KHook and the generated protobufs.
-- Linking against `tier0`, `interfaces`, `mathlib`, `protobuf` and `steam_api` from the hl2sdk.
+- C++20, platform compiler flags and the definitions s2sdk expects.
+- The SDK's own helper code (schema helpers, hook wrappers) and s2sdk's `tier1` / `entity2` sources, compiled into a static library that becomes part of your plugin.
+- Include directories for the toolkit, s2sdk, KHook and the generated protobufs.
+- Linking against `tier0`, `interfaces`, `mathlib`, `protobuf` and `steam_api` from s2sdk.
 - `TOOLKIT_KHOOK_COMMIT`, the KHook commit baked into your plugin for the load-time check.
 - The `.stx` output name.
 
