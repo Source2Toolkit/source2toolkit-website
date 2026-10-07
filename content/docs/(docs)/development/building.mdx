@@ -32,7 +32,7 @@ git clone --recursive https://github.com/Source2Toolkit/source2toolkit-sdk.git
 
 ## Dependencies
 
-**s2sdk** ([alliedmodders/s2sdk](https://github.com/alliedmodders/s2sdk), `cs2` branch) comes with the SDK: it is the `vendor/s2sdk` submodule, pinned to the commit the toolkit headers are built against, and the `--recursive` above already fetched it. What is left is the **Protobufs** (the `csgo/` folder of SteamDatabase/Protobufs). `tools/deps.py` sets that up once and keeps everything current afterwards:
+**s2sdk** ([alliedmodders/s2sdk](https://github.com/alliedmodders/s2sdk), `cs2` branch) comes with the SDK: it is the `vendor/s2sdk` submodule, pinned to the commit the toolkit headers are built against, and the `--recursive` above already fetched it. What is left is the **Protobufs** (the `csgo/` folder of SteamTracking/Protobufs). `tools/deps.py` sets that up once and keeps everything current afterwards:
 
 ```bash
 python tools/deps.py init
@@ -64,7 +64,7 @@ If you would rather not use the script, set the variables before running CMake:
 | Variable | Description |
 |---|---|
 | `S2SDK` | Path to your own s2sdk checkout. Optional — without it the `vendor/s2sdk` submodule is used. `S2SDK_CS2`, `S2SDKCS2`, `HL2SDK_CS2` and the old `HL2SDKCS2` work too; the first one set, in the order `S2SDK_CS2`, `S2SDKCS2`, `S2SDK`, `HL2SDK_CS2`, `HL2SDKCS2`, wins. |
-| `CSGO_PROTO` | Path to the `csgo/` folder of a SteamDatabase/Protobufs checkout |
+| `CSGO_PROTO` | Path to the `csgo/` folder of a SteamTracking/Protobufs checkout |
 
 ```bash
 # Linux
