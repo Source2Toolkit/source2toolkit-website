@@ -40,6 +40,34 @@ const CPlayerBitVec& GetRecipients(void) const override;
 CPlayerSlot GetPredictedPlayerSlot(void) const override;
 ```
 
+### `CopyFrom`
+
+```cpp
+void CopyFrom(const CRecipientFilter& src);
+```
+
+| Parameter | Type |
+|---|---|
+| `src` | [`const CRecipientFilter&`](/docs/schema/Recipientfilter#crecipientfilter) |
+
+### `Reset`
+
+```cpp
+void Reset();
+```
+
+### `MakeInitMessage`
+
+```cpp
+void MakeInitMessage();
+```
+
+### `MakeReliable`
+
+```cpp
+void MakeReliable();
+```
+
 ### `AddRecipient`
 
 ```cpp
@@ -49,6 +77,58 @@ void AddRecipient(CPlayerSlot slot);
 | Parameter | Type |
 |---|---|
 | `slot` | `CPlayerSlot` |
+
+### `RemoveRecipient`
+
+```cpp
+void RemoveRecipient(CPlayerSlot slot);
+```
+
+| Parameter | Type |
+|---|---|
+| `slot` | `CPlayerSlot` |
+
+### `RemoveAllRecipients`
+
+```cpp
+void RemoveAllRecipients();
+```
+
+### `HasRecipient`
+
+```cpp
+bool HasRecipient(CPlayerSlot slot) const;
+```
+
+| Parameter | Type |
+|---|---|
+| `slot` | `CPlayerSlot` |
+
+### `GetRecipientCount`
+
+```cpp
+int GetRecipientCount() const;
+```
+
+### `AddPlayersFromBitMask`
+
+```cpp
+void AddPlayersFromBitMask(const CPlayerBitVec& playerbits);
+```
+
+| Parameter | Type |
+|---|---|
+| `playerbits` | `const CPlayerBitVec&` |
+
+### `RemovePlayersFromBitMask`
+
+```cpp
+void RemovePlayersFromBitMask(const CPlayerBitVec& playerbits);
+```
+
+| Parameter | Type |
+|---|---|
+| `playerbits` | `const CPlayerBitVec&` |
 
 ### `SetFromBitmask`
 
@@ -60,11 +140,37 @@ void SetFromBitmask(uint64_t mask);
 |---|---|
 | `mask` | `uint64_t` |
 
-### `MakeReliable`
+### `SetPredictedPlayer`
 
 ```cpp
-void MakeReliable();
+void SetPredictedPlayer(CPlayerSlot slot);
 ```
+
+| Parameter | Type |
+|---|---|
+| `slot` | `CPlayerSlot` |
+
+### `IsUsingPredictionRules`
+
+```cpp
+bool IsUsingPredictionRules() const;
+```
+
+### `IgnorePredictionCull`
+
+```cpp
+bool IgnorePredictionCull() const;
+```
+
+### `SetIgnorePredictionCull`
+
+```cpp
+void SetIgnorePredictionCull(bool ignore);
+```
+
+| Parameter | Type |
+|---|---|
+| `ignore` | `bool` |
 
 ## `CSingleRecipientFilter`
 

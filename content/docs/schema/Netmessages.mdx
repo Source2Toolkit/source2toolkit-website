@@ -73,12 +73,20 @@ INetworkMessageInternal* GetNetMessage() const override;
 ### `CopyConstruct`
 
 ```cpp
-CNetMessage* CopyConstruct(const CNetMessage* other) const override;
+CNetMessage* CopyConstruct() const override;
 ```
 
-| Parameter | Type |
-|---|---|
-| `other` | `const CNetMessage*` |
+### `GetMessageId`
+
+```cpp
+NetworkMessageId GetMessageId() const override;
+```
+
+### `GetName`
+
+```cpp
+const char* GetName() const override;
+```
 
 ## Enums
 

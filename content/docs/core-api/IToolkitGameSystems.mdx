@@ -6,14 +6,14 @@ description: "Interface for registering game systems with the engine."
 
 A game system is how the engine lets code run at fixed points of a session -- BuildGameSessionManifest for precaching, ServerGamePostSimulate per frame, and the rest of the IGameSystem event set. Registering one means getting a factory into the engine's own linked list, whose head lives in a static the engine never exports.
 
-The toolkit finds that head once, by signature, and hands it over here. It has to be handed over rather than used directly, because CBaseGameSystemFactory::sm_pFirst is a static member: every binary that includes the hl2sdk header gets its own copy, so a plugin's copy is null until it is pointed at the engine's.
+The toolkit finds that head once, by signature, and hands it over here. It has to be handed over rather than used directly, because CBaseGameSystemFactory::sm_pFirst is a static member: every binary that includes the s2sdk header gets its own copy, so a plugin's copy is null until it is pointed at the engine's.
 
 Access to the engine's game system registry.
 
 Registering a game system of your own is three steps:
 
 ```cpp
-// 1. Declare it, the way the hl2sdk expects.
+// 1. Declare it, the way s2sdk expects.
 class MyGameSystem : public CAutoGameSystem
 {
 public:
