@@ -1,18 +1,17 @@
 ---
 title: SDK Dependencies
-description: Where the SDK gets s2sdk and the Protobufs, how tools/deps.py sets them up, keeps KHook on the core's commit, and how the build finds them.
+description: Where the SDK gets s2sdk, how tools/deps.py sets it up, keeps KHook on the core's commit, and how the build finds it.
 ---
 
-The SDK compiles against one thing it does not carry in git, and three it carries as submodules:
+The SDK compiles against three things it carries as submodules:
 
 | Dependency | What it is | Where it lives |
 |---|---|---|
-| **s2sdk** | the `cs2` branch of [alliedmodders/s2sdk](https://github.com/alliedmodders/s2sdk) — AlliedModders' Source 2 SDK, formerly the `cs2` branch of hl2sdk | `vendor/s2sdk` submodule, or your own checkout |
-| **Protobufs** | the `csgo/` folder of [SteamTracking/Protobufs](https://github.com/SteamTracking/Protobufs) | your checkout (`CSGO_PROTO`), or `vendor/Protobufs` |
+| **s2sdk** | the `cs2` branch of [alliedmodders/s2sdk](https://github.com/alliedmodders/s2sdk) — AlliedModders' Source 2 SDK, formerly the `cs2` branch of hl2sdk — game protobufs included | `vendor/s2sdk` submodule, or your own checkout |
 | **KHook** | Metamod:Source's detour library, headers only | `vendor/khook` submodule |
 | **hl2sdk-manifests** | AMBuild's SDK descriptions (AMBuild builds only) | `vendor/hl2sdk-manifests` submodule |
 
-A `git clone --recursive` of the SDK brings s2sdk with it, pinned to the commit the toolkit headers are built against, so nothing but the Protobufs needs setting up. `tools/deps.py` does that once, and afterwards keeps everything current with a single command. It needs nothing but Python 3 and git, on Linux and Windows alike.
+A `git clone --recursive` of the SDK brings all three, s2sdk pinned to the commit the toolkit headers are built against, so a fresh clone builds as it is. The game protobufs are s2sdk's own `.proto` files (`common/`, `game/shared/`, `gcsdk/`, ...); the SDK generates them into its `Protobufs` library. `tools/deps.py` is for pointing the SDK at an s2sdk checkout of your own, and for keeping everything current with a single command. It needs nothing but Python 3 and git, on Linux and Windows alike.
 
 <Callout type="warning">
   KHook is the one dependency with no freedom in it. The toolkit core is compiled against the KHook inside Metamod:Source, every plugin against `vendor/khook`, and the core compares the two commits when a plugin loads: a mismatch means the plugin refuses to load. That is why `update` moves `vendor/khook` to exactly the commit `alliedmodders/metamod-source` master pins, and nowhere else.
@@ -29,6 +28,10 @@ S2SDK_CS2, S2SDKCS2, S2SDK, HL2SDK_CS2, HL2SDKCS2
 
 `HL2SDKCS2` is the name from the hl2sdk days and keeps working; the newer names come first, so a stale `HL2SDKCS2` left in a shell profile does not shadow an `S2SDK` you set later. With none of them set, CMake and AMBuild use `vendor/s2sdk`.
 
+<Callout type="info">
+  `CSGO_PROTO` and a separate SteamTracking/Protobufs checkout are no longer used: the protos come from s2sdk. A `deps.json` that still has a `protobufs` entry is read as if it didn't.
+</Callout>
+
 
 ## init — choose once
 
@@ -37,42 +40,32 @@ cd source2toolkit-sdk
 python tools/deps.py init
 ```
 
-For s2sdk and then for the Protobufs, `init` asks one question:
+`init` asks one question:
 
 ```
 s2sdk:
   1) use the checkout S2SDK points at: /home/s2sdk
   2) use the vendor/s2sdk submodule of this SDK (https://github.com/alliedmodders/s2sdk.git cs2)
   choice [1/2]:
-
-protobufs:
-  1) use the checkout CSGO_PROTO points at: /home/Protobufs/csgo
-  2) download https://github.com/SteamTracking/Protobufs.git (master) into vendor/Protobufs
-  choice [1/2]:
 ```
 
-- **1** uses a checkout you already have. If one of the environment variables is set, that path is taken (and read again from the environment on every later run, so it may move). If none is set, or the path does not look like the dependency, you are asked for the path, and that path is remembered.
-- **2** uses the SDK's own copy: the `vendor/s2sdk` submodule for s2sdk, a clone into `vendor/` for the Protobufs.
+- **1** uses a checkout you already have. If one of the environment variables is set, that path is taken (and read again from the environment on every later run, so it may move). If none is set, or the path does not look like s2sdk, you are asked for the path, and that path is remembered.
+- **2** uses the SDK's `vendor/s2sdk` submodule.
 
-The answers go into `deps.json` next to the SDK. It is ignored by git, as are `deps.cmake` (see below) and the `vendor/Protobufs` clone. A `deps.json` written before s2sdk (with an `hl2sdk` entry) is read as the s2sdk one, a `download` choice as the submodule.
+The answer goes into `deps.json` next to the SDK. It is ignored by git, as is `deps.cmake` (see below). A `deps.json` written before s2sdk (with an `hl2sdk` entry) is read as the s2sdk one, a `download` choice as the submodule.
 
 `init` ends by running `update`, so after it the dependencies are in place.
 
 ### Without a terminal
 
-Every question has a flag, which is what a CI script or a Dockerfile wants:
+The question has a flag, which is what a CI script or a Dockerfile wants:
 
 ```bash
-python tools/deps.py init --s2sdk submodule --protobufs download
-python tools/deps.py init --s2sdk env --protobufs env
-python tools/deps.py init --s2sdk submodule --protobufs download --protobufs-repo https://github.com/you/Protobufs.git
+python tools/deps.py init --s2sdk submodule
+python tools/deps.py init --s2sdk env
 ```
 
 `--metamod-repo owner/name` and `--metamod-branch` change which Metamod:Source repository the KHook pin is read from (default `alliedmodders/metamod-source` `master`, the one the toolkit core is built against).
-
-<Callout type="info">
-  `CSGO_PROTO` may point at the `csgo/` folder or at the root of the Protobufs checkout; `init` finds `csgo/` itself.
-</Callout>
 
 
 ## update — keep it current
@@ -83,14 +76,14 @@ python tools/deps.py update
 
 Does, in this order:
 
-1. **s2sdk** and **Protobufs**: in your own checkout, `git pull --ff-only` plus a submodule update (a checkout with local changes, or a branch without an upstream, is reported and left alone). The `vendor/s2sdk` submodule is put on the commit the SDK pins — not the head of `cs2`, since the toolkit headers are checked against the pinned one. The `vendor/Protobufs` clone is pulled.
+1. **s2sdk**: in your own checkout, `git pull --ff-only` (a checkout with local changes, or a branch without an upstream, is reported and left alone). The `vendor/s2sdk` submodule is put on the commit the SDK pins — not the head of `cs2`, since the toolkit headers are checked against the pinned one.
 2. **KHook**: reads the commit `third_party/khook` is pinned to in Metamod:Source (from GitHub, no clone needed) and checks `vendor/khook` out at it. When that moves, the SDK's own submodule pointer has changed: commit the bump if this is the SDK you maintain.
 3. **hl2sdk-manifests**: `vendor/hl2sdk-manifests` to the latest `master`.
 4. Rewrites `deps.cmake` and prints the status.
 
 `--no-khook` and `--no-manifests` skip steps 2 and 3.
 
-In `env` mode the environment variables have to be set when `update` runs, the same as when building; put them in your shell profile, or answer the path question by hand so it is stored.
+In `env` mode the environment variable has to be set when `update` runs, the same as when building; put it in your shell profile, or answer the path question by hand so it is stored.
 
 
 ## status — what is checked out
@@ -101,17 +94,16 @@ python tools/deps.py status
 
 ```
   s2sdk      submodule  /home/source2toolkit-sdk/vendor/s2sdk  [e47a470ab5c2] ok
-  protobufs  from CSGO_PROTO /home/Protobufs/csgo  [8b84a0ef18da] ok
   khook      submodule  2a8953533da2  (tracks alliedmodders/metamod-source master)
   manifests  submodule  25562f7019db
 ```
 
-`ok` means the probe file (`public/eiface.h`, `netmessages.proto`) is there. A `MISSING` here is what a CMake error about s2sdk or `CSGO_PROTO` looks like before CMake runs.
+`ok` means the probe file (`public/eiface.h`) is there. A `MISSING` here is what a CMake error about s2sdk looks like before CMake runs.
 
 
 ## How the build picks it up
 
-- **CMake** includes `deps.cmake`, if it exists, before it looks at the environment. The file only carries explicit choices (the submodule, a download, a typed path), so such a choice wins over a stale environment variable. Without `deps.json` at all, s2sdk comes from the first of the variables above that is set, else `vendor/s2sdk`; the Protobufs from `CSGO_PROTO`, else `vendor/Protobufs/csgo`. A missing dependency is reported with the path it looked at. A plugin that adds the SDK with `add_subdirectory()` gets the s2sdk path back in `SOURCESDK`.
+- **CMake** includes `deps.cmake`, if it exists, before it looks at the environment. The file only carries explicit choices (the submodule, or a typed path), so such a choice wins over a stale environment variable. Without `deps.json` at all, s2sdk comes from the first of the variables above that is set, else `vendor/s2sdk`. A missing s2sdk is reported with the path it looked at. A plugin that adds the SDK with `add_subdirectory()` gets the s2sdk path back in `SOURCESDK`.
 - **AMBuild** reads `deps.json` directly, with the same order and fallbacks.
 
-Nothing has to change for a build that never ran `deps.py`: clone the SDK with its submodules, set `CSGO_PROTO` and build, as on the [SDK & Building](/docs/development/building) page.
+Nothing has to change for a build that never ran `deps.py`: clone the SDK with its submodules and build, as on the [SDK & Building](/docs/development/building) page.

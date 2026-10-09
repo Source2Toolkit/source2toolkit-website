@@ -9,7 +9,7 @@ The **Source2Toolkit SDK** is what you compile plugins against. It contains:
 - **KHook** headers — Metamod:Source's own detour library — as the `vendor/khook` submodule, pinned to the commit Metamod is built with;
 - the CMake (and AMBuild) build configuration, including the `add_s2toolkit_plugin` helper;
 - **s2sdk** — AlliedModders' Source 2 SDK, formerly hl2sdk's `cs2` branch — as the `vendor/s2sdk` submodule, unless you point it at your own checkout;
-- the **Protobufs**, from a checkout you already have or one the SDK downloads for you.
+- the game **protobufs**, generated from s2sdk's own `.proto` files into the SDK's `Protobufs` library.
 
 Requirements: CMake 3.18+, a C++20 compiler (GCC or Clang on Linux, MSVC on Windows), Python 3 and git.
 
@@ -32,13 +32,15 @@ git clone --recursive https://github.com/Source2Toolkit/source2toolkit-sdk.git
 
 ## Dependencies
 
-**s2sdk** ([alliedmodders/s2sdk](https://github.com/alliedmodders/s2sdk), `cs2` branch) comes with the SDK: it is the `vendor/s2sdk` submodule, pinned to the commit the toolkit headers are built against, and the `--recursive` above already fetched it. What is left is the **Protobufs** (the `csgo/` folder of SteamTracking/Protobufs). `tools/deps.py` sets that up once and keeps everything current afterwards:
+**s2sdk** ([alliedmodders/s2sdk](https://github.com/alliedmodders/s2sdk), `cs2` branch) comes with the SDK: it is the `vendor/s2sdk` submodule, pinned to the commit the toolkit headers are built against, and the `--recursive` above already fetched it. The game protobufs are s2sdk's own `.proto` files, so there is nothing else to fetch: a fresh clone builds as it is.
+
+`tools/deps.py` is there for when you would rather use an s2sdk checkout of your own, and to keep everything current:
 
 ```bash
 python tools/deps.py init
 ```
 
-`init` asks, for s2sdk and for the Protobufs, whether to use a checkout you already have — found through an environment variable (below), or a path you type — or the SDK's own copy: the `vendor/s2sdk` submodule, a Protobufs clone into `vendor/`. The answer is saved in `deps.json` next to the SDK (ignored by git), and from then on one command brings everything up to date:
+`init` asks whether to use a checkout you already have — found through an environment variable (below), or a path you type — or the `vendor/s2sdk` submodule. The answer is saved in `deps.json` next to the SDK (ignored by git), and from then on one command brings everything up to date:
 
 ```bash
 python tools/deps.py update
@@ -49,34 +51,35 @@ python tools/deps.py update
 The questions can be answered up front, which is what a CI script wants:
 
 ```bash
-python tools/deps.py init --s2sdk submodule --protobufs download
-python tools/deps.py init --s2sdk env --protobufs env
+python tools/deps.py init --s2sdk submodule
+python tools/deps.py init --s2sdk env
 ```
 
 <Callout type="info">
-  An explicit choice wins over the environment: `deps.py` writes `deps.cmake`, which CMake includes before it looks at any variable. Without `deps.json`, s2sdk comes from the first variable below that is set, else `vendor/s2sdk`, and the Protobufs from `CSGO_PROTO`, else `vendor/Protobufs/csgo`.
+  An explicit choice wins over the environment: `deps.py` writes `deps.cmake`, which CMake includes before it looks at any variable. Without `deps.json`, s2sdk comes from the first variable below that is set, else `vendor/s2sdk`.
 </Callout>
 
 ### By hand
 
-If you would rather not use the script, set the variables before running CMake:
+If you would rather not use the script, set the variable before running CMake:
 
 | Variable | Description |
 |---|---|
 | `S2SDK` | Path to your own s2sdk checkout. Optional — without it the `vendor/s2sdk` submodule is used. `S2SDK_CS2`, `S2SDKCS2`, `HL2SDK_CS2` and the old `HL2SDKCS2` work too; the first one set, in the order `S2SDK_CS2`, `S2SDKCS2`, `S2SDK`, `HL2SDK_CS2`, `HL2SDKCS2`, wins. |
-| `CSGO_PROTO` | Path to the `csgo/` folder of a SteamTracking/Protobufs checkout |
 
 ```bash
 # Linux
 export S2SDK=/path/to/s2sdk          # optional
-export CSGO_PROTO=/path/to/Protobufs/csgo
 ```
 
 ```powershell
 # Windows (PowerShell)
 $env:S2SDK = "C:\path\to\s2sdk"       # optional
-$env:CSGO_PROTO = "C:\path\to\Protobufs\csgo"
 ```
+
+<Callout type="info">
+  `CSGO_PROTO` is gone: the protobufs no longer come from a separate SteamTracking/Protobufs checkout but from s2sdk itself, so you can drop it from your environment.
+</Callout>
 
 <Callout type="info">
   Coming from hl2sdk? Its `cs2` branch is no longer maintained; s2sdk continues it with the same history. Clone `https://github.com/alliedmodders/s2sdk.git` (branch `cs2`) and point `S2SDK` at it, or simply unset `HL2SDKCS2` and let the submodule be used.
