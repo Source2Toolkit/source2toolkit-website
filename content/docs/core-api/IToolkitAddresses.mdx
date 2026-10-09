@@ -449,7 +449,7 @@ The game's implementation ignores the out argument and only reports whether a na
 ### `CLoggingSystem_LogDirect_t`
 
 ```cpp
-using CLoggingSystem_LogDirect_t = LoggingResponse_t (FASTCALL*)(CLoggingSystem* pThis, LoggingChannelID_t nChannelID, LoggingSeverity_t nSeverity, const LeafCodeInfo_t* pCodeInfo, const LoggingMetaData_t* pMetaData, Color color, const char* pszMessage);
+using CLoggingSystem_LogDirect_t = LoggingResponse_t (FASTCALL*)(CLoggingSystem* pThis, LoggingChannelID_t nChannelID, LoggingSeverity_t nSeverity, const LoggingRareOptions_t* pRareOptions, const LoggingMetaData_t* pMetaData, Color color, const char* pszMessage);
 ```
 
 CLoggingSystem::LogDirect (tier0) -- the member behind LoggingSystem_LogDirect.

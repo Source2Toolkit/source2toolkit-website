@@ -533,11 +533,12 @@ Part of TOOLKIT_SAVEVARS() for a plugin; the core calls it once its interfaces e
 ```cpp
 #define TOOLKIT_SAVEVARS() \
     g_ToolkitAPI = api; 
+    /* s2sdk's GameEntitySystem() (entity2/entitysystem.cpp) reads it */ 
+    g_pGameResourceServiceServer = api->GetGameResourceService(); 
     g_PluginAPI  = static_cast<IToolkitPlugin*>(this); 
     g_PluginID   = id; 
     KHook::__exported__khook = static_cast<KHook::IKHook*>(api->ToolkitFactory(TOOLKIT_KHOOK_INTERFACE, nullptr, nullptr)); 
-    g_ToolkitCoreKHookCommit = static_cast<const char*>(api->ToolkitFactory(TOOLKIT_KHOOK_VERSION_INTERFACE, nullptr, nullptr)); 
-    TOOLKIT_FILLVARS(api)
+    ...
 ```
 
 Initializes global variables inside Load().
