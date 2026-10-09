@@ -13,61 +13,6 @@ Provides:
 
 **Header** [`source2toolkit/schema/entityio.h`](https://github.com/Source2Toolkit/source2toolkit-sdk/blob/main/public/source2toolkit/schema/entityio.h)
 
-## `EntityIOConnectionDesc_t`
-
-Describes a single output connection.
-
-Example (Hammer): OnTrigger -&gt; target_entity -&gt; input_name
-
-### Fields
-
-| Field | Type | Description |
-|---|---|---|
-| `m_targetDesc` | `string_t` | Target entity name |
-| `m_targetInput` | `string_t` | Input name to call |
-| `m_valueOverride` | `string_t` | Override value |
-| `m_hTarget` | `CEntityHandle` | Target handle |
-| `m_nTargetType` | [`EntityIOTargetType_t`](/docs/schema/entity/enums/EntityIOTargetType_t) |  |
-| `m_nTimesToFire` | `int32` | How many times it can fire |
-| `m_flDelay` | `float` | Delay before firing |
-
-## `EntityIOConnection_t`
-
-Runtime connection node.
-
-**Inherits** [`EntityIOConnectionDesc_t`](/docs/schema/Entityio#entityioconnectiondesc_t)
-
-### Fields
-
-| Field | Type |
-|---|---|
-| `m_bMarkedForRemoval` | `bool` |
-| `m_pNext` | [`EntityIOConnection_t*`](/docs/schema/Entityio#entityioconnection_t) |
-
-## `EntityIOOutputDesc_t`
-
-Output metadata.
-
-### Fields
-
-| Field | Type | Description |
-|---|---|---|
-| `m_pName` | `const char*` | Output name (e.g. "OnTrigger") |
-| `m_nFlags` | `uint32` |  |
-| `m_nOutputOffset` | `uint32` |  |
-
-## `CEntityIOOutput`
-
-Represents an entity output.
-
-### Fields
-
-| Field | Type | Description |
-|---|---|---|
-| `vtable` | `void*` |  |
-| `m_pConnections` | [`EntityIOConnection_t*`](/docs/schema/Entityio#entityioconnection_t) | Linked list of connections |
-| `m_pDesc` | [`EntityIOOutputDesc_t*`](/docs/schema/Entityio#entityiooutputdesc_t) | Output descriptor |
-
 ## `InputData_t`
 
 Data passed to inputs.

@@ -15,8 +15,8 @@ Generated from the game's schema. Header: [`source2toolkit/schema/entity/classes
 | `m_nLogicBranchNames` | `CUtlSymbolLarge` |
 | `m_LogicBranchList` | [`CUtlVector<CHandle<CBaseEntity>>`](/docs/schema/entity/classes/CBaseEntity) |
 | `m_eLastState` | [`CLogicBranchList__LogicBranchListenerLastState_t`](/docs/schema/entity/enums/CLogicBranchList__LogicBranchListenerLastState_t) |
-| `m_OnAllTrue` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_OnAllFalse` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_OnMixed` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
+| `m_OnAllTrue` | `CEntityIOOutput` |
+| `m_OnAllFalse` | `CEntityIOOutput` |
+| `m_OnMixed` | `CEntityIOOutput` |
 
 Schema fields are accessors: read with `entity->m_field()`, write with `entity->m_field = value` (the write marks the field for networking).

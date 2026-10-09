@@ -23,8 +23,8 @@ Generated from the game's schema. Header: [`source2toolkit/schema/entity/classes
 | `m_vDamageForce` | `Vector` |
 | `m_thinkAlways` | `bool` |
 | `m_hurtThinkPeriod` | `float` |
-| `m_OnHurt` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_OnHurtPlayer` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
+| `m_OnHurt` | `CEntityIOOutput` |
+| `m_OnHurtPlayer` | `CEntityIOOutput` |
 | `m_hurtEntities` | [`CUtlVector<CHandle<CBaseEntity>>`](/docs/schema/entity/classes/CBaseEntity) |
 
 Schema fields are accessors: read with `entity->m_field()`, write with `entity->m_field = value` (the write marks the field for networking).

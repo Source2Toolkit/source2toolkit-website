@@ -24,8 +24,8 @@ Generated from the game's schema. Header: [`source2toolkit/schema/entity/classes
 | `m_iInitialWindDir` | `uint16_t` |
 | `m_flInitialWindSpeed` | `float` |
 | `m_location` | `Vector` |
-| `m_OnGustStart` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_OnGustEnd` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
+| `m_OnGustStart` | `CEntityIOOutput` |
+| `m_OnGustEnd` | `CEntityIOOutput` |
 | `m_hEntOwner` | [`CHandle<CBaseEntity>`](/docs/schema/entity/classes/CBaseEntity) |
 
 Schema fields are accessors: read with `entity->m_field()`, write with `entity->m_field = value` (the write marks the field for networking).

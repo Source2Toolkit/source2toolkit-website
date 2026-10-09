@@ -22,7 +22,7 @@ Generated from the game's schema. Header: [`source2toolkit/schema/entity/classes
 | `m_flPostSpawnSpeed` | `float` |
 | `m_bPostSpawnUseAngles` | `bool` |
 | `m_iszTemplate` | `CUtlSymbolLarge` |
-| `m_pOutputOnSpawned` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_pOutputOnFailedSpawn` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
+| `m_pOutputOnSpawned` | `CEntityIOOutput` |
+| `m_pOutputOnFailedSpawn` | `CEntityIOOutput` |
 
 Schema fields are accessors: read with `entity->m_field()`, write with `entity->m_field = value` (the write marks the field for networking).

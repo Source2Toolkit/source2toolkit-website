@@ -13,8 +13,8 @@ Generated from the game's schema. Header: [`source2toolkit/schema/entity/classes
 | Field | Type |
 |---|---|
 | `m_soundInfo` | [`ConstraintSoundInfo`](/docs/schema/entity/classes/ConstraintSoundInfo) |
-| `m_NotifyMinLimitReached` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_NotifyMaxLimitReached` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
+| `m_NotifyMinLimitReached` | `CEntityIOOutput` |
+| `m_NotifyMaxLimitReached` | `CEntityIOOutput` |
 | `m_bAtMinLimit` | `bool` |
 | `m_bAtMaxLimit` | `bool` |
 | `m_hinge` | [`constraint_hingeparams_t`](/docs/schema/entity/classes/constraint_hingeparams_t) |
@@ -29,7 +29,7 @@ Generated from the game's schema. Header: [`source2toolkit/schema/entity/classes
 | `m_flAngleSpeed` | `float` |
 | `m_flAngleSpeedThreshold` | `float` |
 | `m_flLimitsDebugVisRotation` | `float` |
-| `m_OnStartMoving` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_OnStopMoving` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
+| `m_OnStartMoving` | `CEntityIOOutput` |
+| `m_OnStopMoving` | `CEntityIOOutput` |
 
 Schema fields are accessors: read with `entity->m_field()`, write with `entity->m_field = value` (the write marks the field for networking).

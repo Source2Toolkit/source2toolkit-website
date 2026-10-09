@@ -24,8 +24,8 @@ Generated from the game's schema. Header: [`source2toolkit/schema/entity/classes
 | `m_iszLerpSound` | `CUtlSymbolLarge` |
 | `m_bAttachTouchingObject` | `bool` |
 | `m_hEntityToWaitForDisconnect` | [`CHandle<CBaseEntity>`](/docs/schema/entity/classes/CBaseEntity) |
-| `m_OnLerpStarted` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_OnLerpFinished` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_OnDetached` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
+| `m_OnLerpStarted` | `CEntityIOOutput` |
+| `m_OnLerpFinished` | `CEntityIOOutput` |
+| `m_OnDetached` | `CEntityIOOutput` |
 
 Schema fields are accessors: read with `entity->m_field()`, write with `entity->m_field = value` (the write marks the field for networking).

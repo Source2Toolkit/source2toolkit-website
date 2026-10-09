@@ -17,9 +17,9 @@ Generated from the game's schema. Header: [`source2toolkit/schema/entity/classes
 | `m_bHitMin` | `bool` |
 | `m_bHitMax` | `bool` |
 | `m_bDisabled` | `bool` |
-| `m_OnHitMin` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_OnHitMax` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_OnChangedFromMin` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
-| `m_OnChangedFromMax` | [`CEntityIOOutput`](/docs/schema/Entityio#centityiooutput) |
+| `m_OnHitMin` | `CEntityIOOutput` |
+| `m_OnHitMax` | `CEntityIOOutput` |
+| `m_OnChangedFromMin` | `CEntityIOOutput` |
+| `m_OnChangedFromMax` | `CEntityIOOutput` |
 
 Schema fields are accessors: read with `entity->m_field()`, write with `entity->m_field = value` (the write marks the field for networking).
