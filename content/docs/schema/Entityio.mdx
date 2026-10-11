@@ -129,3 +129,20 @@ Key for output lookup.
 ## `OutputKeyHash`
 
 Hash function for OutputKey.
+
+## Macros
+
+### `NULL`
+
+```cpp
+#define NULL 0
+```
+
+Entity I/O system (inputs/outputs) for Source2Toolkit.
+
+Provides:
+- Access to entity outputs (OnTrigger, OnUse, etc.)
+- Hooking system for listening to outputs
+- Filtering by entity + classname + output name
+
+<Callout type="info">Equivalent to Hammer I/O system (FireOutput / AcceptInput).</Callout>
