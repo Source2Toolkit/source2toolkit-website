@@ -77,17 +77,6 @@ Represents schema offset information.
 | `manipulator` | `SchemaCollectionManipulatorFn_t` | For an atomic collection field, the engine's own element accessor. |
 | `valid` | `bool` | False when the field is not in the running game's schema (renamed, removed). Reads then come from zeroed scratch memory and writes go there, so the plugin keeps running with that one field doing nothing -- an error line says which, once. |
 
-## `CNetworkVarChainer2`
-
-Helper for networked variable propagation.
-
-### Fields
-
-| Field | Type |
-|---|---|
-| `m_pEntity` | `CEntityInstance*` |
-| `m_PathIndex` | `ChangeAccessorFieldPathIndex_t` |
-
 ## `CStrongHandle`
 
 Lightweight wrapper for entity pointers.
