@@ -12,7 +12,7 @@ This file defines:
 
 <Callout type="info">This is the main entry point for plugin developers.</Callout>
 
-**Interface id** `IToolkitGameHooks003` (`TOOLKIT_GAMEHOOKS_INTERFACE`) · **Interface id** `S2ToolkitKHook001` (`TOOLKIT_KHOOK_INTERFACE`) · **Interface id** `S2ToolkitKHookVersion001` (`TOOLKIT_KHOOK_VERSION_INTERFACE`) · **Header** [`source2toolkit/IToolkitPlugin.h`](https://github.com/Source2Toolkit/source2toolkit-sdk/blob/main/public/source2toolkit/IToolkitPlugin.h)
+**Interface id** `IToolkitGameHooks003` (`TOOLKIT_GAMEHOOKS_INTERFACE`) · **Interface id** `S2ToolkitKHook001` (`TOOLKIT_KHOOK_INTERFACE`) · **Interface id** `S2ToolkitKHookVersion001` (`TOOLKIT_KHOOK_VERSION_INTERFACE`) · **Interface id** `S2ToolkitKHookHeader001` (`TOOLKIT_KHOOK_HEADER_INTERFACE`) · **Header** [`source2toolkit/IToolkitPlugin.h`](https://github.com/Source2Toolkit/source2toolkit-sdk/blob/main/public/source2toolkit/IToolkitPlugin.h)
 
 ## Types
 
@@ -402,15 +402,16 @@ Post IGameEventManager2::LoadEventsFromFile, with the manager it was called on: 
 ### `ToolkitKHookVersionMatches`
 
 ```cpp
-inline bool ToolkitKHookVersionMatches(const char* coreCommit, char* error, size_t maxlen, const char** note);
+inline bool ToolkitKHookVersionMatches(const char* coreHeader, const char* coreCommit, char* error, size_t maxlen, const char** note);
 ```
 
-The load-time half of the KHook check; TOOLKIT_SAVEVARS() calls it.
+The load-time half of the KHook check; KHOOK_INIT() calls it.
 
-Returns false and fills `error` only when both commits are known and differ. A side that cannot say -- a core too old to answer, a plugin built without git -- makes the check impossible, not failed: that goes out through `note` and the load goes on.
+Compares the khook.hpp hashes when both sides have one, else the commits (a core older than the header hash). Returns false and fills `error` only when the compared values are known and differ. A side that cannot say -- a core too old to answer, a plugin built without git -- makes the check impossible, not failed: that goes out through `note` and the load goes on.
 
 | Parameter | Type |
 |---|---|
+| `coreHeader` | `const char*` |
 | `coreCommit` | `const char*` |
 | `error` | `char*` |
 | `maxlen` | `size_t` |
@@ -434,6 +435,14 @@ Defined by IToolkitHooks.h for a plugin; the core never asks itself.
 ```
 
 Set by the SDK's CMakeLists.txt / AMBuildScript from vendor/khook (the core: from metamod's copy). A build that bypassed both gets "unknown", which the check reports and lets through.
+
+### `TOOLKIT_KHOOK_HEADER`
+
+```cpp
+#define TOOLKIT_KHOOK_HEADER "unknown"
+```
+
+Set by the SDK's CMakeLists.txt / AMBuildScript: the first 16 hex digits of the SHA-256 of khook.hpp with CRs dropped. A build that bypassed both gets "unknown", and the check falls back to the commit.
 
 ### `TOOLKIT_INTERFACE_NAME`
 
@@ -475,8 +484,8 @@ Exposes plugin interface to engine.
     IToolkitPlugin*          g_PluginAPI               = nullptr; 
     PluginId                 g_PluginID                = 0; 
     const char*             g_ToolkitCoreKHookCommit = nullptr; 
+    const char*             g_ToolkitCoreKHookHeader = nullptr; 
     IToolkitAddresses*       g_pToolkitAddresses       = nullptr; 
-    IToolkitCommands*        g_pToolkitCommands        = nullptr; 
     ...
 ```
 
@@ -507,9 +516,9 @@ Creates:
     extern IToolkitPlugin*          g_PluginAPI; 
     extern PluginId                 g_PluginID; 
     extern const char*             g_ToolkitCoreKHookCommit; 
+    extern const char*             g_ToolkitCoreKHookHeader; 
     extern IToolkitAddresses*       g_pToolkitAddresses; 
     extern IToolkitCommands*        g_pToolkitCommands; 
-    extern IToolkitConVars*         g_pToolkitConVars; 
     ...
 ```
 
@@ -543,7 +552,7 @@ Part of TOOLKIT_SAVEVARS() for a plugin; the core calls it once its interfaces e
 
 Initializes global variables inside Load().
 
-<Callout type="info">Must be called in plugin Load(), with its parameters under their declared names (id, api, error, maxlen): the KHook version check in here writes `error` and returns false out of Load() when the KHook this plugin was compiled against is not the one the core runs (see TOOLKIT_KHOOK_VERSION_INTERFACE).</Callout>
+<Callout type="info">Must be called in plugin Load(), with its parameters under their declared names (id, api, error, maxlen).</Callout>
 
 ### `TOOLKIT_LOG`
 
