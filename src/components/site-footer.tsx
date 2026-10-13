@@ -26,6 +26,7 @@ const project: FooterLink[] = [
   { label: 'Releases', href: `${gh}/source2toolkit/releases` },
   { label: 'Issues', href: `${gh}/source2toolkit/issues` },
   { label: 'Sample plugin', href: `${gh}/source2toolkit/tree/main/samples/cs2_sample` },
+  { label: 'Benchmarks', href: '/benchmarks' },
 ];
 
 const help: FooterLink[] = [

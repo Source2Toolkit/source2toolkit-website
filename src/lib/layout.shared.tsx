@@ -86,6 +86,10 @@ export function baseOptions({ withSections = false }: { withSections?: boolean }
         </span>
       ),
     },
-    links: [...sectionLinks, ...iconLinks],
+    links: [
+      ...sectionLinks,
+      { type: 'main', text: 'Benchmarks', url: '/benchmarks', active: 'url' },
+      ...iconLinks,
+    ],
   };
 }
