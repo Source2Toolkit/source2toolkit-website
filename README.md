@@ -1,5 +1,10 @@
 # source2toolkit-website
 
+> [!IMPORTANT]
+> **This repository is archived.** Source2Toolkit lives on as **Source2Mod**: the website continues at [source2mod.net](https://source2mod.net).
+> Source2Mod grew out of Source2Toolkit -- the same core, SDK and website, renamed and carried on, with SourcePawn plugins next to C++ ones.
+> New work, releases and issues are there; website: [source2mod.net](https://source2mod.net).
+
 This is a Next.js application generated with
 [Create Fumadocs](https://github.com/fuma-nama/fumadocs).
 
